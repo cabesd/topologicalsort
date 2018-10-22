@@ -11,15 +11,14 @@ public class Driver {
 
 	public static void main(String[] args) {
 		init();
-		System.out.println("Welcome to my Task Scheduling Project:\n");
 		g.TopologicalSort();
 		
 		reader = new Scanner(System.in);
-		char input;
+		String input;
 		do {
 			System.out.println("\nSelect: (a) add tasks (b) add dependencies (c) quit");
-			input = reader.next().charAt(0);
-			switch(input) {
+			input = reader.next();
+			switch(input.charAt(0)) {
 			case 'a':
 				addTasks();
 				break;
@@ -28,7 +27,9 @@ public class Driver {
 				break;
 			}
 			g.TopologicalSort();
-		}while( input != 'c' );
+		}while( input.charAt(0) != 'c' );
+		reader.close();
+		System.out.println("Bye");
 	}
 	
 	public static void init() {
@@ -36,6 +37,7 @@ public class Driver {
 		// createExample();
 		readInputFile("src/taskData.txt");
 		formatInputFile();
+		System.out.println("Welcome to my Task Scheduling Project:\n");
 	}
 	
 	public static void createExample() {
@@ -73,7 +75,7 @@ public class Driver {
 
 	public static void formatInputFile() {
 		if( txtLines.size() > 0 ) {
-			readTasks(txtLines.get(0));
+			readTasks(txtLines.get(0), false);
 		}
 		if( txtLines.size() >= 1 ) {	
 			readDependencies(txtLines.get(1));
@@ -81,19 +83,54 @@ public class Driver {
 	}
 	
 	public static void addTasks() {
-		
+		Scanner reader = new Scanner(System.in);
+		System.out.println("What tasks do you want to add?");
+		String str = reader.nextLine();
+		readTasks(str, true);
 	}
 	
 	public static void addDependencies() {
+		Scanner reader = new Scanner(System.in);
 		System.out.println("What dependencies do you want to add?");
-		String str = reader.next();
+		String str = reader.nextLine();
 		readDependencies(str);
 	}
 	
-	public static void readTasks(String str) {
+	public static void readTasks(String str, boolean askDeps) {
 		String[] tasks = str.split(" ");
 		for(String t : tasks) {
-			g.addNode(t.charAt(0));
+			char new_task = t.charAt(0);
+			g.addNode(new_task);
+			if( askDeps ) {
+				System.out.println("What dependencies does "+ new_task +" have?");
+				Scanner reader = new Scanner(System.in);
+				String[] fathers = reader.nextLine().split(" ");
+				for(String fa : fathers) {
+					//String[] sides = d.split(",");
+					g.addDep(fa.charAt(0), new_task);
+				}
+				System.out.println("What depends on " + new_task + "?");
+				reader = new Scanner(System.in);
+				String[] childs = reader.nextLine().split(" ");
+				for(String ch : childs) {
+					//String[] sides = d.split(",");
+					g.addDep(new_task, ch.charAt(0));
+				}
+			}
+		}
+		if(askDeps) {
+			System.out.println("Do you want to add additional dependencies? [Y/N]");
+			reader = new Scanner(System.in);
+			String input = reader.next();
+			switch(input.charAt(0)) {
+			case 'y':
+			case 'Y':
+				addDependencies();
+				break;
+			case 'n':
+			case 'N':
+				break;
+			}
 		}
 	}
 	

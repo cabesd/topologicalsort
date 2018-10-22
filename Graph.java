@@ -50,10 +50,8 @@ public class Graph {
    }
 
    public Graph(){
-	  this.min_levels = 0;
-	  this.unique_sort = true; // will identify this while processing
-	  this.is_cycle = false;
       this.TaskList = new ArrayList<Node>();
+      reinit();
    }
    
    private Node findNode(char input){
@@ -78,10 +76,17 @@ public class Graph {
       nChildren.addFather(nFather);
    }
    
+   private void reinit() {
+	   this.min_levels = 0;
+	   this.is_cycle = false;
+	   this.unique_sort = true;
+	   for(Node n : this.TaskList) {
+		   n.reinit();
+	   }
+   }
+   
    public void TopologicalSort(){
-	  for(Node n : this.TaskList) {
-		  n.reinit();
-	  }
+	  reinit();
 	   
       Queue<Node> q = new LinkedList<>();
       // First look for one that has 0 indegrees
@@ -116,7 +121,10 @@ public class Graph {
             }
          }
       }
-      
+      if( counter != this.TaskList.size() ) {
+    	  // Cyclic error
+    	  this.is_cycle = true;
+      }
       this.ShowResults(SortedArray);
    }
    

@@ -1,2 +1,2 @@
-A B C D E
-(A,B) (A,C) (B,C) (C,D) (B,E) (D,E)
+A B C D E F G
+(A,B) (A,C) (B,C) (C,D) (D,E) (C,F) (C,G) (F,G)
